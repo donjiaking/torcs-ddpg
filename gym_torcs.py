@@ -133,7 +133,8 @@ class TorcsEnv:
         # direction-dependent positive reward
         track = np.array(obs['track'])
         sp = np.array(obs['speedX'])
-        progress = sp*np.cos(obs['angle'])
+
+        progress = sp*np.cos(obs['angle']) - sp*np.sin(obs['angle']) + np.abs(sp*obs['trackPos'])
         reward = progress
 
         # collision detection

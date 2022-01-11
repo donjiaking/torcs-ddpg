@@ -32,6 +32,6 @@ class Critic(nn.Module):
         s = self.hidden_layer_s(s)
         a = self.hidden_layer_a(a)
 
-        output = self.hidden_layer_out(s+a)
+        output = self.hidden_layer_out(s+a) # B*1
 
         return output

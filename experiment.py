@@ -48,9 +48,9 @@ target_actor = Actor(dim_state=dim_state).to(device)
 target_critic = Critic(dim_state=dim_state, dim_action=dim_action).to(device)
 
 if(os.path.exists('./models/actor_model.pth')):
-    actor.load_state_dict(torch.load('actor_model.pth'))
+    actor.load_state_dict(torch.load('./models/actor_model.pth'))
 if(os.path.exists('./models/critic_model.pth')):
-    critic.load_state_dict(torch.load('critic_model.pth'))
+    critic.load_state_dict(torch.load('./models/critic_model.pth'))
 
 replay_buffer = ReplayBuffer(buffer_capacity)
 
@@ -67,6 +67,7 @@ env = TorcsEnv(vision=vision, throttle=False, gear_change=False)
 
 def extract_state(ob):
     # TODO: add other sensors
+    # may need to modify gym_torcs
     return np.hstack((ob.track, ob.speedX, ob.speedY, ob.speedZ))
 
 def save_model(actor, critic):
@@ -93,7 +94,7 @@ def load_one_batch():
     for tran in batch:
         s_i.append(tran[0])
         a_i.append(tran[1])
-        r_i.append(tran[2])
+        r_i.append([tran[2]])
         s_i1.append(tran[3])
     s_i = torch.tensor(np.array(s_i).astype(np.float32), device=device)
     a_i = torch.tensor(np.array(a_i).astype(np.float32), device=device)
@@ -133,10 +134,10 @@ for e in range(max_epoch):
         replay_buffer.store(s_t, a_t, r_t, s_t1) # store transition in R
 
         s_i, a_i, r_i, s_i1 = load_one_batch() # sample batch from R
-        y_i = torch.tensor(np.array(a_i).astype(np.float32), device=device)
+        y_i = torch.ones_like(r_i, device=device).float()
 
-        target_q = target_critic(s_i1, target_actor(s_i1))
-        y_i = r_i + gamma * target_q
+        target_q = target_critic(s_i1, target_actor(s_i1)) # B*1
+        y_i = r_i + gamma * target_q # B*1
 
         if(is_train):
             # update critic network
@@ -148,8 +149,7 @@ for e in range(max_epoch):
 
             # update actor network
             a = actor(s_i)
-            a = actor(s_i).requires_grad_(True) 
-            q = critic(s_i, a).requires_grad_(True)
+            q = critic(s_i, a)
             critic.zero_grad()
             q_sum = q.sum()
             grads = torch.autograd.grad(q_sum, a)
@@ -174,8 +174,8 @@ for e in range(max_epoch):
                 + (1-tau)*target_critic.state_dict()[name]
             target_critic.load_state_dict(target_critic_state_dict)
 
-            # update current state
-            s_t = s_t1
+        # update current state
+        s_t = s_t1
         
         # checkpoint
         if np.mod(e, checkpoint_freq) == 0 and is_train:

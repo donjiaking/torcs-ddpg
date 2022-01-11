@@ -3,6 +3,7 @@
 __pycache__
 
 vtorcs-RL-color
+models
 
 autostart.sh
 practice.xml
