@@ -1,0 +1,14 @@
+.idea
+.vscode
+__pycache__
+
+vtorcs-RL-color
+
+autostart.sh
+practice.xml
+gym_torcs.pyc
+
+foo.py
+
+example_experiment.py
+sample_agent.py
