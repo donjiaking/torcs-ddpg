@@ -5,13 +5,6 @@ __pycache__
 vtorcs-RL-color
 models
 
-autostart.sh
-practice.xml
-gym_torcs.pyc
-
 foo.py
-
-example_experiment.py
-sample_agent.py
 
 log.txt
