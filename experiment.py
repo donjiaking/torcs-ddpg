@@ -30,9 +30,9 @@ buffer_capacity = 100000
 
 vision = False
 
-gamma = 0.90
+gamma = 0.95
 tau = 0.001
-epsilon = 1
+epsilon = 1.2
 epsilon_reduction = 1.0/100000
 
 init_lr_actor = 0.0001
@@ -231,6 +231,7 @@ for e in range(max_epoch):
     logger.info("TOTAL DISTANCE: " + str(ob.distRaced))
     if(is_train):
         logger.info("MEAN CRITIC LOSS: {:.3f}".format(tot_loss_critic/tot_steps))
+        logger.info("MEAN ACTOR LOSS: {:.3f}".format(tot_loss_actor/tot_steps))
     logger.info("------------------------------------------------")
 
 

@@ -95,6 +95,7 @@ class TorcsEnv:
                 action_torcs['accel'] -= .2
         else:
             action_torcs['accel'] = this_action['accel']
+            action_torcs['brake'] = this_action['brake']
 
         #  Automatic Gear Change by Snakeoil
         if self.gear_change is True:
@@ -225,7 +226,7 @@ class TorcsEnv:
             torcs_action.update({'brake': u[2]})
 
         if self.gear_change is True: # gear change action is enabled
-            torcs_action.update({'gear': u[2]})
+            torcs_action.update({'gear': u[3]})
 
         return torcs_action
 
