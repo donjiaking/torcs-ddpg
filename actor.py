@@ -8,9 +8,11 @@ output: action a
 TODO: tune hidden layer number & size
 """
 class Actor(nn.Module):
-    def __init__(self, dim_state, hidden_size=[100,200]) -> None:
+
+    def __init__(self, dim_state, hidden_size=[256,512]) -> None:
         super().__init__()
         hidden_size1, hidden_size2 = hidden_size
+
 
         self.hidden_layer = nn.Sequential(
             nn.Linear(dim_state, hidden_size1), 
@@ -23,6 +25,7 @@ class Actor(nn.Module):
         self.fc_acc = nn.Linear(hidden_size2, 1)
         self.fc_brake = nn.Linear(hidden_size2, 1)
 
+        # initialize layer weight
         nn.init.normal_(self.fc_steer.weight, 0, 1e-4)
         nn.init.normal_(self.fc_acc.weight, 0, 1e-4)
         nn.init.normal_(self.fc_brake.weight, 0, 1e-4)

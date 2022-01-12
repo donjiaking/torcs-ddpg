@@ -8,7 +8,7 @@ output: Q(s,a)
 TODO: tune hidden layer number & size
 """
 class Critic(nn.Module):
-    def __init__(self, dim_state, dim_action, hidden_size=[100,200]) -> None:
+    def __init__(self, dim_state, dim_action, hidden_size=[256,512]) -> None:
         super().__init__()
         hidden_size1, hidden_size2 = hidden_size
 
