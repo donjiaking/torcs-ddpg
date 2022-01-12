@@ -19,7 +19,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ############################## Hyperparameters ####################################
 
-max_epoch = 100
+max_epoch = 1000
 max_step = 100000
 
 dim_state = 29
@@ -38,7 +38,7 @@ epsilon_reduction = 1.0/100000
 init_lr_actor = 0.0001
 init_lr_critic = 0.001
 
-checkpoint_freq = 5
+checkpoint_freq = 10
 
 is_train = True
 

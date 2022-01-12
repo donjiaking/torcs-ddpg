@@ -10,7 +10,7 @@ def reward_function1(obs):
     angle = obs['angle']
     trackPos = obs['trackPos']
 
-    reward = v_x*np.cos(angle) - np.abs(v_x*np.sin(angle)) - 2*np.abs(v_x*trackPos)
+    reward = v_x*np.cos(angle) - np.abs(v_x*np.sin(angle)) - np.abs(v_x*trackPos)
 
     return reward
 

@@ -139,15 +139,15 @@ class TorcsEnv:
 
         # collision detection
         if obs['damage'] - obs_pre['damage'] > 0:
-            reward = -10  # TODO: may need to tune this
+            reward = -1  # TODO: may need to tune this
 
         # Termination judgement #########################
         episode_terminate = False
 
         # TODO: may need to tune the reward and stop_prob
-        stop_prob = 0.2  # stop probaility is added
+        stop_prob = 1  # stop probaility is added
         if track.min() < 0:  # Episode is terminated if the car is out of track
-            reward = -100
+            reward = -200
             if np.random.rand() < stop_prob:
                episode_terminate = True
                client.R.d['meta'] = True
