@@ -9,10 +9,9 @@ TODO: tune hidden layer number & size
 """
 class Actor(nn.Module):
 
-    def __init__(self, dim_state, hidden_size=[256,512]) -> None:
+    def __init__(self, dim_state, hidden_size=[300,600]) -> None:
         super().__init__()
         hidden_size1, hidden_size2 = hidden_size
-
 
         self.hidden_layer = nn.Sequential(
             nn.Linear(dim_state, hidden_size1), 
