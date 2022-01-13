@@ -32,4 +32,4 @@ def reward_function2(obs):
     return reward
 
 
-reward_func = reward_function2
+reward_func = reward_function1

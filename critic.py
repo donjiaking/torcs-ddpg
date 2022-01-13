@@ -46,7 +46,7 @@ class Critic(nn.Module):
 
         self.fc1 = nn.Sequential(
             nn.Linear(dim_state, hidden_size1),
-            nn.BatchNorm1d(hidden_size1),
+            # nn.BatchNorm1d(hidden_size1),
             nn.ReLU(inplace=True),
         )
 
@@ -60,7 +60,7 @@ class Critic(nn.Module):
 
         self.fc4 = nn.Sequential(
             nn.Linear(hidden_size3, hidden_size3),
-            nn.BatchNorm1d(hidden_size3),
+            # nn.BatchNorm1d(hidden_size3),
             nn.ReLU(inplace=True),
         )
 

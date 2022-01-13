@@ -99,9 +99,9 @@ def generate_noise(a_t, eps):
     n_t[0][1] = is_train * max(eps, 0) * ou_process(a_t[0][1], 0.5, 1.00, 0.10)
     n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], -0.1, 1.00, 0.05)
 
-    # # apply random brake
-    # if np.random.random() <= 0.1:
-    #     n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], 0.2, 1.00, 0.10)
+    # apply random brake
+    if np.random.random() < 0.1:
+        n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], 0.2, 1.00, 0.10)
 
     return n_t
 
