@@ -45,5 +45,20 @@ def reward_function3(obs):
 
     return reward
 
+def reward_function4(obs):
+    """
+    obs: current full-observation (raw)
+    """
+    v_x = obs['speedX']
+    v_y =obs['speedY']
+    angle = obs['angle']
+    trackPos = obs['trackPos']
+
+    reward = v_x*np.cos(angle) - np.abs(v_x*np.sin(angle)) \
+            - 0.5*v_x*np.abs(trackPos)- v_y*np.abs(trackPos) - \
+            0.5*np.abs(trackPos) - 0.5*np.abs(np.angle)
+
+    return reward
+
 
 reward_func = reward_function3

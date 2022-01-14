@@ -19,7 +19,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ############################## Hyperparameters ####################################
 
-max_epoch = 1500
+max_epoch = 1000
 max_step = 100000
 
 dim_state = 29
@@ -32,17 +32,17 @@ vision = False
 
 gamma = 0.99
 tau = 0.001
-epsilon = 0.1 #1.5
-epsilon_brake = 1.0 #1.5
-epsilon_reduction = 1.0/100000
-epsilon_brake_reduction = 10.0/100000
+epsilon = 1.3 #1.5
+# epsilon_brake = 1.0 #1.5
+epsilon_reduction = 2.0/100000
+# epsilon_brake_reduction = 10.0/100000
 
 init_lr_actor = 0.0001
 init_lr_critic = 0.001
 
 checkpoint_freq = 10
 
-is_train = True
+is_train = False
 
 
 ############################## Initialization ####################################
@@ -96,14 +96,15 @@ def ou_process(x, mu, theta, sigma):
 
 def generate_noise(a_t, eps):
     # generate noise by using Ornstein-Uhlenbeck process
+    # TODO: may need to tune here
     n_t = np.zeros([1, dim_action])
     n_t[0][0] = is_train * max(eps, 0) * ou_process(a_t[0][0], 0.0, 0.60, 0.30)
     n_t[0][1] = is_train * max(eps, 0) * ou_process(a_t[0][1], 0.5, 1.00, 0.10)
     n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], -0.1, 1.00, 0.05)
 
-    # apply random brake
-    if np.random.random() < 0.4: # TODO: tune this
-        n_t[0][2] = is_train * max(epsilon_brake, 0) * ou_process(a_t[0][2], 0.2, 1.00, 0.10)
+    # let agent learn to brake by applying random brake
+    if np.random.random() < 0.1: # TODO: may need to tune here
+        n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], 0.2, 1.00, 0.10)
 
     return n_t
 
@@ -135,7 +136,7 @@ logger.info("------------------------------------------------")
 for e in range(max_epoch):
     logger.info("Episode : " + str(e))
 
-    if np.mod(e, 3) == 0:
+    if np.mod(e, 10) == 0:
         # deal with memory leak error
         ob = env.reset(relaunch=True)
     else:
@@ -151,7 +152,7 @@ for e in range(max_epoch):
 
     for t in range(max_step):
         epsilon -= epsilon_reduction
-        epsilon_brake_reduction -= epsilon_reduction
+        # epsilon_brake_reduction -= epsilon_reduction
 
         a_t = actor(torch.stack([torch.tensor(s_t.astype(np.float32), device=device)],dim=0))
         a_t = a_t.data.cpu().numpy()
