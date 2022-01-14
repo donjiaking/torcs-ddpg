@@ -29,7 +29,7 @@ class ReplayBuffer():
 
         batch = []
         for _ in range(batch_size):
-            batch.append(self.buffer[random.randint(0, min(batch_size, self.size)-1)])
+            batch.append(self.buffer[random.randint(0, self.size-1)])
 
         return batch
     

@@ -32,8 +32,10 @@ vision = False
 
 gamma = 0.99
 tau = 0.001
-epsilon = 1.5
+epsilon = 0.1 #1.5
+epsilon_brake = 1.0 #1.5
 epsilon_reduction = 1.0/100000
+epsilon_brake_reduction = 10.0/100000
 
 init_lr_actor = 0.0001
 init_lr_critic = 0.001
@@ -100,8 +102,8 @@ def generate_noise(a_t, eps):
     n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], -0.1, 1.00, 0.05)
 
     # apply random brake
-    if np.random.random() < 0.1:
-        n_t[0][2] = is_train * max(eps, 0) * ou_process(a_t[0][2], 0.2, 1.00, 0.10)
+    if np.random.random() < 0.4: # TODO: tune this
+        n_t[0][2] = is_train * max(epsilon_brake, 0) * ou_process(a_t[0][2], 0.2, 1.00, 0.10)
 
     return n_t
 
@@ -149,6 +151,7 @@ for e in range(max_epoch):
 
     for t in range(max_step):
         epsilon -= epsilon_reduction
+        epsilon_brake_reduction -= epsilon_reduction
 
         a_t = actor(torch.stack([torch.tensor(s_t.astype(np.float32), device=device)],dim=0))
         a_t = a_t.data.cpu().numpy()
@@ -164,7 +167,7 @@ for e in range(max_epoch):
             replay_buffer.store(s_t, a_t, r_t, s_t1, done) # store a transition in R
 
             s_i, a_i, r_i, s_i1, dones = load_one_batch() # sample a batch from R
-            target_q = torch.ones_like(a_i, device=device).float()
+            target_q = torch.ones_like(r_i, device=device).float()
 
             target_q_next = target_critic(s_i1, target_actor(s_i1)) # B*1
             target_q = r_i + gamma * target_q_next # B*1
@@ -176,7 +179,7 @@ for e in range(max_epoch):
             q = critic(s_i, a_i)
             optimizer_critic.zero_grad()
             loss_critic = F.mse_loss(target_q, q) # MSE as loss function
-            loss_critic.backward(retain_graph=True)
+            loss_critic.backward()
             tot_loss_critic += loss_critic.item()
             optimizer_critic.step()
 
@@ -218,7 +221,10 @@ for e in range(max_epoch):
 
             target_critic.load_state_dict(target_critic_state_dict)
 
+        if(is_train):
             logger.info("Episode {} Step {}: Reward {:.3f} Critic Loss {:.6f}".format(e, t, r_t, loss_critic))
+        else:
+            logger.info("Episode {} Step {}: Reward {:.3f}".format(e, t, r_t))
 
         # update current state
         s_t = s_t1
